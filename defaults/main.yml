@@ -1,0 +1,22 @@
+---
+# defaults file for bvansomeren.freebsd-nginx
+
+freebsd_nginx_package: nginx
+freebsd_nginx_reset_ownership: no
+
+# Default configuration
+freebsd_nginx_user: nobody
+freebsd_nginx_worker_processes: "{{ ansible_processor_count }}"
+freebsd_nginx_worker_connections: 1024
+freebsd_nginx_sendfile: "on"
+freebsd_nginx_gzip: "on"
+
+freebsd_nginx_default_enabled: yes
+freebsd_nginx_default_charset: "utf-8"
+freebsd_nginx_default_docroot: "/usr/local/www/nginx"
+freebsd_nginx_default_index: "index.html index.htm"
+
+freebsd_nginx_logfolder: /var/log/nginx
+
+freebsd_nginx_includes: 
+- "vhosts/*.conf"

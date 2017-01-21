@@ -1,0 +1,21 @@
+---
+# tasks file for bvansomeren.freebsd-nginx
+
+- name: ensure nginx is installed
+  package:
+    name: "{{ freebsd_nginx_package }}"
+    state: present
+
+- name: ensure nginx enabled in rc.conf
+  command: sysrc -f /etc/rc.conf nginx_enable=YES
+
+- name: ensure nginx.conf is setup properly
+  template:
+    src: nginx.conf
+    dest: /usr/local/etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: ensure nginx is started
+  service:
+    name: nginx
+    state: started
