@@ -18,5 +18,8 @@ freebsd_nginx_default_index: "index.html index.htm"
 
 freebsd_nginx_logfolder: /var/log/nginx
 
+freebsd_nginx_include_folder: "/usr/local/etc/nginx/vhosts"
 freebsd_nginx_includes: 
-- "vhosts/*.conf"
+- "{{ freebsd_nginx_include_folder }}/*.conf"
+
+freebsd_nginx_vhosts: []

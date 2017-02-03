@@ -15,6 +15,18 @@
     dest: /usr/local/etc/nginx/nginx.conf
   notify: restart nginx
 
+- name: ensure vhost folder exists
+  file:
+    path: "{{ freebsd_nginx_include_folder }}"
+    state: directory
+
+- name: ensure vhosts are setup
+  template:
+    src: vhost.conf
+    dest: "{{ freebsd_nginx_include_folder }}/{{ item.server_name }}.conf"
+  with_items: "{{ freebsd_nginx_vhosts }}"
+  notify: restart nginx
+
 - name: ensure nginx is started
   service:
     name: nginx
