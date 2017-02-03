@@ -20,6 +20,13 @@
     path: "{{ freebsd_nginx_include_folder }}"
     state: directory
 
+- name: ensure vhost docroot folders exist if requested
+  file:
+    path: "{{ item.root }}"
+    state: directory
+  with_items: "{{ freebsd_nginx_vhosts }}"
+  when: freebsd_nginx_create_vhosts
+
 - name: ensure vhosts are setup
   template:
     src: vhost.conf
