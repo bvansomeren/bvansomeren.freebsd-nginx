@@ -12,13 +12,28 @@
 - name: ensure nginx.conf is setup properly
   template:
     src: nginx.conf
-    dest: /usr/local/etc/nginx/nginx.conf
+    dest: "{{ freebsd_nginx_config_folder }}/nginx.conf"
   notify: restart nginx
 
-- name: ensure vhost folder exists
+- name: ensure letsencrypt-acme-challenge.conf is setup
+  template:
+    src: letsencrypt-acme-challenge.conf
+    dest: "{{ freebsd_nginx_config_folder }}/letsencrypt-acme-challenge.conf"
+  notify: restart nginx
+  when: freebsd_nginx_letsencrypt_enabled
+
+- name: ensure vhost and ssl folders exists
   file:
-    path: "{{ freebsd_nginx_include_folder }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+  - "{{ freebsd_nginx_include_folder }}"
+  - "{{ freebsd_nginx_ssl_folder }}"
+
+- name: ensure strong dhparam.pem
+  command: "openssl dhparam -out {{ freebsd_nginx_ssl_folder }}/dhparam.pem 4096" 
+  args:
+    creates: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
 
 - name: ensure vhost docroot folders exist if requested
   file:
@@ -38,3 +53,35 @@
   service:
     name: nginx
     state: started
+
+- name: ensure certificate install folders
+  file:
+    path: "{{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}"
+    state: directory
+  with_items: "{{ freebsd_nginx_vhosts }}"
+  when: freebsd_nginx_letsencrypt_enabled and item.letsencrypt is defined and item.letsencrypt
+
+- name: enable ssl for websites with certificates
+  blockinfile:
+    dest: "{{ freebsd_nginx_include_folder }}/{{ item.server_name }}.conf"
+    marker: "# SSL CONFIG HERE #"
+    content: |
+      ssl_certificate {{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}/cert.pem;
+      ssl_certificate_key {{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}/key.pem;
+      ssl_dhparam {{ freebsd_nginx_ssl_folder }}/dhparam.pem;
+      ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+      ssl_prefer_server_ciphers on;
+      ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+      ssl_ecdh_curve secp384r1; # Requires nginx >= 1.1.0
+      ssl_session_cache shared:SSL:10m;
+      ssl_session_tickets off; # Requires nginx >= 1.5.9
+      ssl_stapling on; # Requires nginx >= 1.3.7
+      ssl_stapling_verify on; # Requires nginx => 1.3.7
+      resolver 8.8.8.8 8.8.4.4 valid=300s;
+      resolver_timeout 5s;
+      add_header Strict-Transport-Security "max-age=63072000; preload";
+      add_header X-Frame-Options DENY;
+      add_header X-Content-Type-Options nosniff;
+  with_items: "{{ freebsd_nginx_vhosts }}"
+  when: freebsd_nginx_letsencrypt_enabled and item.letsencrypt is defined and item.letsencrypt
+  notify: restart nginx

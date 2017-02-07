@@ -10,6 +10,8 @@ freebsd_nginx_worker_processes: "{{ ansible_processor_count }}"
 freebsd_nginx_worker_connections: 1024
 freebsd_nginx_sendfile: "on"
 freebsd_nginx_gzip: "on"
+freebsd_nginx_config_folder: /usr/local/etc/nginx
+freebsd_nginx_ssl_folder: "{{ freebsd_nginx_config_folder }}/ssl"
 
 freebsd_nginx_default_enabled: yes
 freebsd_nginx_default_charset: "utf-8"
@@ -24,3 +26,6 @@ freebsd_nginx_includes:
 
 freebsd_nginx_vhosts: []
 freebsd_nginx_create_vhosts: no
+
+freebsd_nginx_letsencrypt_enabled: no
+#freebsd_nginx_le_proxy: 
