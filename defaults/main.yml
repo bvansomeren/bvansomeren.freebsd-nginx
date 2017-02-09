@@ -28,4 +28,9 @@ freebsd_nginx_vhosts: []
 freebsd_nginx_create_vhosts: no
 
 freebsd_nginx_letsencrypt_enabled: no
-#freebsd_nginx_le_proxy: 
+#freebsd_nginx_le_proxy:
+#Kudos to cipherli.st
+freebsd_nginx_default_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
+freebsd_nginx_default_ssl_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+freebsd_nginx_default_ecdh_curve: "secp384r1"
+freebsd_nginx_resolvers: "8.8.8.8 8.8.4.4"
