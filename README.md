@@ -85,6 +85,13 @@ freebsd_nginx_includes:
 
 Should you want to place your includes elsewhere, change the above.
 
+```
+freebsd_nginx_ssl_generate_dhparam: no
+```
+
+A value of no means we copy the premade dhparams.pem to the server. You can also replace the file yourself.
+Changing this to yes will generate this file once (which will take a while on slow hardware)
+
 Dependencies
 ------------
 

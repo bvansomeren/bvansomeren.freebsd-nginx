@@ -30,10 +30,17 @@
   - "{{ freebsd_nginx_include_folder }}"
   - "{{ freebsd_nginx_ssl_folder }}"
 
-- name: ensure strong dhparam.pem
+- name: ensure generation of strong dhparam.pem
   command: "openssl dhparam -out {{ freebsd_nginx_ssl_folder }}/dhparam.pem 4096" 
   args:
     creates: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
+  when: freebsd_nginx_ssl_generate_dhparam
+
+- name: ensure copy of strong dhparam.pem
+  copy:
+    src: dhparam.pem
+    dest: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
+  when: not freebsd_nginx_ssl_generate_dhparam
 
 - stat:
     path: "{{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}/cert.pem"
