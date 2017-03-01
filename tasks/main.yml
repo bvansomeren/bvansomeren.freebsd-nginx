@@ -31,7 +31,7 @@
   - "{{ freebsd_nginx_ssl_folder }}"
 
 - name: ensure generation of strong dhparam.pem
-  command: "openssl dhparam -out {{ freebsd_nginx_ssl_folder }}/dhparam.pem 4096" 
+  command: "openssl dhparam -out {{ freebsd_nginx_ssl_folder }}/dhparam.pem 4096"
   args:
     creates: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
   when: freebsd_nginx_ssl_generate_dhparam
@@ -53,7 +53,7 @@
 - name: ensure all certificates exists before pushing configuration
   fail:
     msg: "Certificate for doesn't exist at {{ item.stat.path }}"
-  when: "{{ not item.stat.exists }}"
+  when: "{{ not item.stat.exists and freebsd_nginx_letsencrypt_enabled }}"
   with_items: "{{ certificate_check.results }}"
 
 - name: ensure vhost docroot folders exist if requested
