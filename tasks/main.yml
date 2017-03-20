@@ -8,6 +8,8 @@
 
 - name: ensure nginx enabled in rc.conf
   command: sysrc -f /etc/rc.conf nginx_enable=YES
+  register: sysrc_changed
+  changed_when:  "'YES -> YES' not in sysrc_changed.stdout"
 
 - name: ensure nginx.conf is setup properly
   template:
