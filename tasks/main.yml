@@ -63,14 +63,13 @@
     path: "{{ item.root }}"
     state: directory
   with_items: "{{ nginx_vhosts }}"
-  when: nginx_create_vhosts
+  when: nginx_create_vhost_roots
 
 - name: ensure vhosts are setup
   template:
     src: vhost.conf
     dest: "{{ nginx_include_folder }}/{{ item.server_name }}.conf"
   with_items: "{{ nginx_vhosts }}"
-  when: nginx_create_vhosts
   notify: restart nginx
 
 - name: ensure nginx is started

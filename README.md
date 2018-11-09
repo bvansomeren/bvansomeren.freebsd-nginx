@@ -104,8 +104,14 @@ Lame example; Better example soonish.
 
     - hosts: servers
       roles:
-         - { role: bvansomeren.nginx }
+         - role: bvansomeren.nginx
+           nginx_vhosts:
+           - server\_name: "test.example.com"
+             root: "/home/barry/www"
+             index: "index.html"
+             state: "present"
 
+   
 License
 -------
 

@@ -25,7 +25,7 @@ nginx_includes:
 - "{{ nginx_include_folder }}/*.conf"
 
 nginx_vhosts: []
-nginx_create_vhosts: no
+nginx_create_vhost_roots: no
 
 nginx_letsencrypt_enabled: no
 #nginx_le_proxy:
