@@ -3,7 +3,7 @@
 
 - name: ensure nginx is installed
   package:
-    name: "{{ freebsd_nginx_package }}"
+    name: "{{ nginx_package }}"
     state: present
 
 - name: ensure nginx enabled in rc.conf
@@ -14,39 +14,39 @@
 - name: ensure nginx.conf is setup properly
   template:
     src: nginx.conf
-    dest: "{{ freebsd_nginx_config_folder }}/nginx.conf"
+    dest: "{{ nginx_config_folder }}/nginx.conf"
   notify: restart nginx
 
 - name: ensure letsencrypt-acme-challenge.conf is setup
   template:
     src: letsencrypt-acme-challenge.conf
-    dest: "{{ freebsd_nginx_config_folder }}/letsencrypt-acme-challenge.conf"
+    dest: "{{ nginx_config_folder }}/letsencrypt-acme-challenge.conf"
   notify: restart nginx
-  when: freebsd_nginx_letsencrypt_enabled
+  when: nginx_letsencrypt_enabled
 
 - name: ensure vhost and ssl folders exists
   file:
     path: "{{ item }}"
     state: directory
   with_items:
-  - "{{ freebsd_nginx_include_folder }}"
-  - "{{ freebsd_nginx_ssl_folder }}"
+  - "{{ nginx_include_folder }}"
+  - "{{ nginx_ssl_folder }}"
 
 - name: ensure generation of strong dhparam.pem
-  command: "openssl dhparam -out {{ freebsd_nginx_ssl_folder }}/dhparam.pem 4096"
+  command: "openssl dhparam -out {{ nginx_ssl_folder }}/dhparam.pem 4096"
   args:
-    creates: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
-  when: freebsd_nginx_ssl_generate_dhparam
+    creates: "{{ nginx_ssl_folder }}/dhparam.pem"
+  when: nginx_ssl_generate_dhparam
 
 - name: ensure copy of strong dhparam.pem
   copy:
     src: dhparam.pem
-    dest: "{{ freebsd_nginx_ssl_folder }}/dhparam.pem"
-  when: not freebsd_nginx_ssl_generate_dhparam
+    dest: "{{ nginx_ssl_folder }}/dhparam.pem"
+  when: not nginx_ssl_generate_dhparam
 
 - stat:
-    path: "{{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}/cert.pem"
-  with_items: "{{ freebsd_nginx_vhosts }}"
+    path: "{{ nginx_ssl_folder }}/{{ item.server_name }}/cert.pem"
+  with_items: "{{ nginx_vhosts }}"
   register: certificate_check
 
 - debug:
@@ -55,22 +55,22 @@
 - name: ensure all certificates exists before pushing configuration
   fail:
     msg: "Certificate for doesn't exist at {{ item.stat.path }}"
-  when: "{{ not item.stat.exists and freebsd_nginx_letsencrypt_enabled }}"
+  when: "{{ not item.stat.exists and nginx_letsencrypt_enabled }}"
   with_items: "{{ certificate_check.results }}"
 
 - name: ensure vhost docroot folders exist if requested
   file:
     path: "{{ item.root }}"
     state: directory
-  with_items: "{{ freebsd_nginx_vhosts }}"
-  when: freebsd_nginx_create_vhosts
+  with_items: "{{ nginx_vhosts }}"
+  when: nginx_create_vhosts
 
 - name: ensure vhosts are setup
   template:
     src: vhost.conf
-    dest: "{{ freebsd_nginx_include_folder }}/{{ item.server_name }}.conf"
-  with_items: "{{ freebsd_nginx_vhosts }}"
-  when: freebsd_nginx_create_vhosts
+    dest: "{{ nginx_include_folder }}/{{ item.server_name }}.conf"
+  with_items: "{{ nginx_vhosts }}"
+  when: nginx_create_vhosts
   notify: restart nginx
 
 - name: ensure nginx is started
@@ -80,8 +80,8 @@
 
 - name: ensure certificate install folders
   file:
-    path: "{{ freebsd_nginx_ssl_folder }}/{{ item.server_name }}"
+    path: "{{ nginx_ssl_folder }}/{{ item.server_name }}"
     state: directory
-  with_items: "{{ freebsd_nginx_vhosts }}"
-  when: freebsd_nginx_letsencrypt_enabled and item.letsencrypt is defined and item.letsencrypt
+  with_items: "{{ nginx_vhosts }}"
+  when: nginx_letsencrypt_enabled and item.letsencrypt is defined and item.letsencrypt
 

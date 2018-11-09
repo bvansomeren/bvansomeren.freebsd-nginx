@@ -1,38 +1,38 @@
 ---
 # defaults file for bvansomeren.freebsd-nginx
 
-freebsd_nginx_package: nginx
-freebsd_nginx_reset_ownership: no
+nginx_package: nginx
+nginx_reset_ownership: no
 
 # Default configuration
-freebsd_nginx_user: nobody
-freebsd_nginx_worker_processes: "{{ ansible_processor_count }}"
-freebsd_nginx_worker_connections: 1024
-freebsd_nginx_sendfile: "on"
-freebsd_nginx_gzip: "on"
-freebsd_nginx_config_folder: /usr/local/etc/nginx
-freebsd_nginx_ssl_folder: "{{ freebsd_nginx_config_folder }}/ssl"
+nginx_user: nobody
+nginx_worker_processes: "{{ ansible_processor_count }}"
+nginx_worker_connections: 1024
+nginx_sendfile: "on"
+nginx_gzip: "on"
+nginx_config_folder: /usr/local/etc/nginx
+nginx_ssl_folder: "{{ nginx_config_folder }}/ssl"
 
-freebsd_nginx_default_enabled: yes
-freebsd_nginx_default_charset: "utf-8"
-freebsd_nginx_default_docroot: "/usr/local/www/nginx"
-freebsd_nginx_default_index: "index.html index.htm"
+nginx_default_enabled: yes
+nginx_default_charset: "utf-8"
+nginx_default_docroot: "/usr/local/www/nginx"
+nginx_default_index: "index.html index.htm"
 
-freebsd_nginx_logfolder: /var/log/nginx
+nginx_logfolder: /var/log/nginx
 
-freebsd_nginx_include_folder: "/usr/local/etc/nginx/vhosts"
-freebsd_nginx_includes: 
-- "{{ freebsd_nginx_include_folder }}/*.conf"
+nginx_include_folder: "/usr/local/etc/nginx/vhosts"
+nginx_includes: 
+- "{{ nginx_include_folder }}/*.conf"
 
-freebsd_nginx_vhosts: []
-freebsd_nginx_create_vhosts: no
+nginx_vhosts: []
+nginx_create_vhosts: no
 
-freebsd_nginx_letsencrypt_enabled: no
-#freebsd_nginx_le_proxy:
+nginx_letsencrypt_enabled: no
+#nginx_le_proxy:
 #Kudos to cipherli.st
-freebsd_nginx_default_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
-freebsd_nginx_default_ssl_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
-freebsd_nginx_default_ecdh_curve: "secp384r1"
-freebsd_nginx_resolvers: "8.8.8.8 8.8.4.4"
+nginx_default_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
+nginx_default_ssl_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+nginx_default_ecdh_curve: "secp384r1"
+nginx_resolvers: "8.8.8.8 8.8.4.4"
 
-freebsd_nginx_ssl_generate_dhparam: no
+nginx_ssl_generate_dhparam: no

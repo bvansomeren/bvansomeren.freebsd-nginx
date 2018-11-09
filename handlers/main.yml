@@ -1,5 +1,5 @@
 ---
-# handlers file for bvansomeren.freebsd-nginx
+# handlers file for bvansomeren.nginx
 
 - name: restart nginx
   service:
