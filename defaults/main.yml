@@ -24,11 +24,12 @@ nginx_include_folder: "/usr/local/etc/nginx/vhosts"
 nginx_includes: 
 - "{{ nginx_include_folder }}/*.conf"
 
-nginx_vhosts: []
+vhosts: []
 nginx_create_vhost_roots: no
 
-nginx_letsencrypt_enabled: no
-#nginx_le_proxy:
+nginx_letsencrypt_enabled: yes
+nginx_letsencrypt_stateless: no
+#letsencrypt_host
 #Kudos to cipherli.st
 nginx_default_ssl_protocols: "TLSv1 TLSv1.1 TLSv1.2"
 nginx_default_ssl_ciphers: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"

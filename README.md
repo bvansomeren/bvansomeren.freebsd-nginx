@@ -105,13 +105,27 @@ Lame example; Better example soonish.
     - hosts: servers
       roles:
          - role: bvansomeren.nginx
-           nginx_vhosts:
-           - server\_name: "test.example.com"
+           vhost:
+             server\_name: "test.example.com"
              root: "/home/barry/www"
              index: "index.html"
              state: "present"
 
-   
+     - hosts: servers
+      roles:
+         - role: bvansomeren.nginx
+           vhosts:
+           - server\_name: "test.example.com"
+             root: "/home/barry/www"
+             index: "index.html"
+             state: "present"
+           - server\_name: "test2.example.com"
+             root: "/home/barry/www2"
+             index: "index.html"
+             state: "present"
+
+
+  
 License
 -------
 

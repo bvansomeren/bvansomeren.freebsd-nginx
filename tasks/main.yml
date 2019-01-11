@@ -9,7 +9,7 @@
 - name: ensure nginx enabled in rc.conf
   command: sysrc -f /etc/rc.conf nginx_enable=YES
   register: sysrc_changed
-  changed_when:  "'YES -> YES' not in sysrc_changed.stdout"
+  changed_when:  '"YES -> YES" not in sysrc_changed.stdout'
 
 - name: ensure nginx.conf is setup properly
   template:
@@ -23,6 +23,13 @@
     dest: "{{ nginx_config_folder }}/letsencrypt-acme-challenge.conf"
   notify: restart nginx
   when: nginx_letsencrypt_enabled
+
+- name: ensure letsencrypt-acme-stateless.conf  is setup
+  template:
+    src: letsencrypt-acme-stateless.conf
+    dest: "{{ nginx_config_folder }}/letsencrypt-acme-stateless.conf"
+  notify: restart nginx
+  when: nginx_letsencrypt_stateless
 
 - name: ensure vhost and ssl folders exists
   file:
@@ -44,43 +51,16 @@
     dest: "{{ nginx_ssl_folder }}/dhparam.pem"
   when: not nginx_ssl_generate_dhparam
 
-- stat:
-    path: "{{ nginx_ssl_folder }}/{{ item.server_name }}/cert.pem"
-  with_items: "{{ nginx_vhosts }}"
-  register: certificate_check
-
-- debug:
-    var: certificate_check.results
-
-- name: ensure all certificates exists before pushing configuration
-  fail:
-    msg: "Certificate for doesn't exist at {{ item.stat.path }}"
-  when: "{{ not item.stat.exists and nginx_letsencrypt_enabled }}"
-  with_items: "{{ certificate_check.results }}"
-
-- name: ensure vhost docroot folders exist if requested
-  file:
-    path: "{{ item.root }}"
-    state: directory
-  with_items: "{{ nginx_vhosts }}"
-  when: nginx_create_vhost_roots
-
 - name: ensure vhosts are setup
-  template:
-    src: vhost.conf
-    dest: "{{ nginx_include_folder }}/{{ item.server_name }}.conf"
-  with_items: "{{ nginx_vhosts }}"
+  include_tasks: vhost.yml
+  vars:
+    vhost: "{{ item }}"
+  with_items:
+  - "{{ vhosts }}"
   notify: restart nginx
 
 - name: ensure nginx is started
   service:
     name: nginx
     state: started
-
-- name: ensure certificate install folders
-  file:
-    path: "{{ nginx_ssl_folder }}/{{ item.server_name }}"
-    state: directory
-  with_items: "{{ nginx_vhosts }}"
-  when: nginx_letsencrypt_enabled and item.letsencrypt is defined and item.letsencrypt
 
